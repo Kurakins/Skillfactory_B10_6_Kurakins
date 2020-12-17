@@ -9,29 +9,26 @@ class ConversionException(Exception):
 
 class CurrencyConverter:
     @staticmethod
-    def convert(quote: str, base: str, amount: str):
+    def convert(quote: str, base: str, quantity: str):
         if quote == base:
             raise ConversionException(f'Невозможно перевести одинаковые валюты {base}.')
 
         try:
-            quote_ticker = keys[quote]
+            quote = keys[quote]
         except KeyError:
             raise ConversionException(f'Не удалось обработать валюту {quote}.')
 
         try:
-            base_ticker = keys[base]
+            base = keys[base]
         except KeyError:
             raise ConversionException(f'Не удалось обработать валюту {base}.')
 
         try:
-            amount = float(amount)
+            quantity = float(quantity)
         except ValueError:
-            raise ConversionException(f'Не удалось обработать количество {amount}.')
-#        r = requests.get(f'https://min-api.cryptocompare.com/data/price?fsym={quote_ticker}&tsyms={base_ticker}')
-#       r = requests.get(f'http://api.currencies.zone/v1/quotes/EUR/USD/json?quantity=1&key=6390|244HCbTXQSqz~R^v~uFsJjP4_f9UOUe6')
+            raise ConversionException(f'Не удалось обработать количество {quantity}.')
+        target = quote + '/' + base
         r = requests.get(f'http://api.currencies.zone/v1/quotes/{target}/json?quantity={quantity}&key={YOUR_KEY}')
-#       print(r.text)
         d = json.loads(r.content)
-        return (d['result'].get('source'), d['result'].get('target'), d['result'].get('value'))
+        return (d['result'].get('amount'))
 
-    #        return total_base

@@ -25,16 +25,19 @@ def values(message: telebot.types.Message):
 
 @bot.message_handler(content_types=['text'])
 def convert(message: telebot.types.Message):
-    values = message.text.split(' ')
-
-    if len(values) > 3:
-        raise ConversionException('Слишком много параметров.')
-
-    quote, base, amount = values
-    total_base = CurrencyConverter.convert(quote, base, amount)
-
-    text = f'Цена {amount} {quote} в  {base} - {total_base}'
-    bot.send_message(message.chat.id, text)
+    try:
+        values = message.text.split(' ')
+        if len(values) != 3:
+            raise ConversionException('Слишком много параметров.')
+        quote, base, quantity = values
+        total_base = CurrencyConverter.convert(quote, base, quantity)
+    except ConversionException as e:
+        bot.reply_to(message, f'Ошибка пользователя.\n{e}')
+    except Exception as e:
+        bot.reply_to(message, f'Не удалось обработать комманду.\n{e}')
+    else:
+        text = f'Цена {quantity} {quote} в  {base} - {total_base}'
+        bot.send_message(message.chat.id, text)
 
 
 bot.polling(none_stop=True)
