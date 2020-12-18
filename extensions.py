@@ -24,11 +24,11 @@ class CurrencyConverter:
             raise ConversionException(f'Не удалось обработать валюту {base}.')
 
         try:
-            quantity = float(quantity)
+            quantity = int(quantity)
         except ValueError:
             raise ConversionException(f'Не удалось обработать количество {quantity}.')
         target = quote + '/' + base
         r = requests.get(f'http://api.currencies.zone/v1/quotes/{target}/json?quantity={quantity}&key={YOUR_KEY}')
         d = json.loads(r.content)
-        return (d['result'].get('amount'))
+        return(d['result'].get('amount'))
 
